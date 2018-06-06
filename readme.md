@@ -83,9 +83,114 @@ transform-runtime插件,那么写法需要这样
   ],
 }
 ```
+### CLI
+```javascript
+  npm run test // unit test
+  npm run debug // development debug
+  npm run compile // development compile
+  npm run example // run example
+```
 
 ### 原理说明
 
-wait.....
+首先根据babel的[插件开发文档](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md "Markdown")
 
+发现所有的babel插件需要按照以下的格式来进行处理代码
+```javascript
+module.exports = ({ types: t }) => {
+  return {
+    visitor: {
+      // ...some code
+    },
+  };
+}
+```
+然后babel会把你的代码解析成AST
 
+首先建立一个目录example，里面建两个文件index.js, example.js
+
+下列使用这个代码来进行处理
+
+// example.js的内容
+```javascript
+const a = 1 + 2;
+```
+↓↓↓↓↓↓↓↓
+解析成
+```javascript
+const b = 2 - 3;
+```
+在这个网站https://astexplorer.net进行AST解析
+
+<img src="./images/AST.png" width="500" />
+
+观察一下这个语法树
+
+首先进行变量a的替换
+来看一下结果代码
+```javascript
+module.exports = ({ types: t }) => {
+  return {
+    visitor: {
+      Identifier(path) {
+        if (path.node.name === 'a') {
+          path.replaceWith(t.Identifier('b'));
+        }
+      },
+    },
+  };
+}
+
+// 在package.json里面加入 "example": "babel --plugins ../example/index.js ./example/example.js"
+// 运行 npm run example
+// 输出 const b = 1 + 2;
+```
+
+然后继续解析 1 + 2 -> 2 - 3
+```javascript
+module.exports = ({ types: t }) => {
+  return {
+    visitor: {
+      Identifier(path) {
+        ...
+      },
+      BinaryExpression(path) {
+        if (path.node.operator === '+') {
+          const left = t.numericLiteral(2);
+          const right = t.numericLiteral(3);
+          path.replaceWith(t.binaryExpression('-', left, right));
+        }
+      }
+    },
+  };
+}
+// 输出 const b = 2 - 3;
+// 目标完成
+```
+关于t上面有哪些方法可以根据__babel-types__的[文档](https://babeljs.io/docs/core-packages/babel-types/#binaryexpression "Markdown")来进行查阅
+
+还有__path__的一些使用方法在[babel插件手册](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md "Markdown")里也有部分解释
+
+#### 完整代码
+```javascript
+module.exports = ({ types: t }) => {
+  return {
+    visitor: {
+      Identifier(path) {
+        if (path.node.name === 'a') {
+          path.replaceWith(t.Identifier('b'));
+        }
+      },
+      BinaryExpression(path) {
+        if (path.node.operator === '+') {
+          const left = t.numericLiteral(2);
+          const right = t.numericLiteral(3);
+          path.replaceWith(t.binaryExpression('-', left, right));
+        }
+      }
+    },
+  };
+}
+```
+
+#### 没了。
