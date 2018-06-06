@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`works 1`] = `
+"
+import isArray from 'lodash/isArray';
+import toString from 'lodash/toString';
+
+
+isArray([]);
+import add from 'lodash/add';
+add(1, 2)
+
+toString(1);
+add(1, 2)
+
+isArray([1]);"
+`;
