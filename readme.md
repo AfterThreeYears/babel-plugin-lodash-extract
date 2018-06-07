@@ -1,5 +1,8 @@
-## 简易的babel 插件开发入门例子
+#### 如果需要使用这个功能的话请用官方的插件
+[babel-plugin-lodash](https://github.com/lodash/babel-plugin-lodash "MarkDown")
+#### 这个仓库只是一个学习的例子
 
+[仓库地址](https://github.com/AfterThreeYears/babel-plugin-lodash-extract "MarkDown")
 主要做的事情是按需加载lodash库
 将如下的代码
 ```javascript
@@ -122,7 +125,7 @@ const b = 2 - 3;
 ```
 在这个网站https://astexplorer.net进行AST解析
 
-<img src="./images/AST.png" width="500" />
+<img src="https://raw.githubusercontent.com/AfterThreeYears/babel-plugin-lodash-extract/master/images/AST.png" width="500" />
 
 观察一下这个语法树
 
